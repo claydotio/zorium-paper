@@ -15,7 +15,7 @@ module.exports = class Button
       isActive: false
 
   getBackgroundColor: (colors, isRaised, isHovered, isActive, isDark) ->
-    if isRaised
+    if colors.c500
       if isActive
         colors.c700
       else if isHovered
