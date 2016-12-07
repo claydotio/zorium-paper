@@ -7,15 +7,18 @@ if window?
   require './index.styl'
 
 module.exports = class Input
-  constructor: ({@value, @error} = {}) ->
-    @value ?= new Rx.BehaviorSubject ''
+  constructor: ({@value, @valueStreams, @error} = {}) ->
+    unless @valueStreams
+      @valueStreams = new Rx.ReplaySubject 1
+      @value ?= Rx.Observable.just ''
+      @valueStreams.onNext @value
     @error ?= new Rx.BehaviorSubject null
 
     @isFocused = new Rx.BehaviorSubject false
 
     @state = z.state {
       isFocused: @isFocused
-      value: @value
+      value: @valueStreams.switch()
       error: @error
     }
 
@@ -51,7 +54,8 @@ module.exports = class Input
           type: type
         value: value
         oninput: z.ev (e, $$el) =>
-          @value.onNext $$el.value
+          @valueStreams.onNext Rx.Observable.just $$el.value
+          @value?.onNext $$el.value
         onfocus: z.ev (e, $$el) =>
           @isFocused.onNext true
         onblur: z.ev (e, $$el) =>

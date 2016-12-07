@@ -7,7 +7,11 @@ if window?
   require './index.styl'
 
 module.exports = class Textarea
-  constructor: ({@value, @error} = {}) ->
+  constructor: ({@value, @valueStreams, @error} = {}) ->
+    unless @valueStreams
+      @valueStreams = new Rx.ReplaySubject 1
+      @value ?= Rx.Observable.just ''
+      @valueStreams.onNext @value
     @value ?= new Rx.BehaviorSubject ''
     @error ?= new Rx.BehaviorSubject null
 
@@ -15,7 +19,7 @@ module.exports = class Textarea
 
     @state = z.state {
       isFocused: @isFocused
-      value: @value
+      value: @valueStreams.switch()
       error: @error
     }
 
@@ -51,7 +55,8 @@ module.exports = class Textarea
           type: type
         value: value
         oninput: z.ev (e, $$el) =>
-          @value.onNext $$el.value
+          @valueStreams.onNext Rx.Observable.just $$el.value
+          @value?.onNext $$el.value
         onfocus: z.ev (e, $$el) =>
           @isFocused.onNext true
         onblur: z.ev (e, $$el) =>
