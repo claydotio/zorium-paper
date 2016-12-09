@@ -19,7 +19,7 @@
   "dependencies": {
     "coffee-script": "^1.9.2",
     "lodash": "^4.17.2",
-    "rx-lite": "^2.5.2",
+    "rx-lite": "^4.0.8",
     "zorium": "git://github.com/claydotio/zorium.git"
   }
 }
