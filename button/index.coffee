@@ -1,5 +1,5 @@
 z = require 'zorium'
-_ = require 'lodash'
+_defaults = require 'lodash/defaults'
 
 paperColors = require '../colors.json'
 RipplerService = require '../services/rippler'
@@ -49,7 +49,7 @@ module.exports = class Button
     isDark ?= false
     onclick ?= (-> null)
     colors ?= {}
-    colors = _.defaults colors, {
+    colors = _defaults colors, {
       cText: if colors.ink and not isDisabled \
                    then colors.ink
                    else null

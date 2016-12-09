@@ -1,5 +1,6 @@
 z = require 'zorium'
-_ = require 'lodash'
+_isEmpty = require 'lodash/isEmpty'
+_map = require 'lodash/map'
 
 if window?
   require './index.styl'
@@ -17,6 +18,6 @@ module.exports = class Dialog
           if title
             z '.title', title
           z '.content', $content
-        unless _.isEmpty actions
+        unless _isEmpty actions
           z '.actions',
-            _.pluck actions, '$el'
+            _map actions, '$el'
