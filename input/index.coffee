@@ -7,14 +7,14 @@ if window?
   require './index.styl'
 
 module.exports = class Input
-  constructor: ({@value, @valueStreams, @error} = {}) ->
+  constructor: ({@value, @valueStreams, @error, @isFocused} = {}) ->
     unless @valueStreams
       @valueStreams = new Rx.ReplaySubject 1
       @value ?= Rx.Observable.just ''
       @valueStreams.onNext @value
     @error ?= new Rx.BehaviorSubject null
 
-    @isFocused = new Rx.BehaviorSubject false
+    @isFocused ?= new Rx.BehaviorSubject false
 
     @state = z.state {
       isFocused: @isFocused
