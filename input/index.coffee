@@ -8,17 +8,14 @@ if window?
 
 module.exports = class Input
   constructor: ({@value, @valueStreams, @error, @isFocused} = {}) ->
-    unless @valueStreams
-      @valueStreams = new Rx.ReplaySubject 1
-      @value ?= Rx.Observable.just ''
-      @valueStreams.onNext @value
+    @value ?= Rx.BehaviorSubject ''
     @error ?= new Rx.BehaviorSubject null
 
     @isFocused ?= new Rx.BehaviorSubject false
 
     @state = z.state {
       isFocused: @isFocused
-      value: @valueStreams.switch()
+      value: @valueStreams?.switch() or @value
       error: @error
     }
 
@@ -54,8 +51,10 @@ module.exports = class Input
           type: type
         value: value
         oninput: z.ev (e, $$el) =>
-          @valueStreams.onNext Rx.Observable.just $$el.value
-          @value?.onNext $$el.value
+          if @valueStreams
+            @valueStreams.onNext Rx.Observable.just $$el.value
+          else
+            @value.onNext $$el.value
         onfocus: z.ev (e, $$el) =>
           @isFocused.onNext true
         onblur: z.ev (e, $$el) =>
